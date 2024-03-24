@@ -30,6 +30,7 @@ Once these are installed, run the following commands from the Filia root
 directory:
 
 ```
+source ./venv/bin/activate
 pip install -r deps/llvm-project/mlir/python/requirements.txt
 ./deps/configure-llvm.sh
 cmake --build deps/llvm-build --target install
@@ -43,7 +44,7 @@ Once LLVM is installed, you can configure and build Filia with the following com
 
 ```sh
 cmake -S . -B build/debug -DMLIR_DIR=deps/llvm-install/lib/cmake/mlir
-cmake --build build/debug --target install
+sudo cmake --build build/debug --target install
 ```
 
 ## Using Filia
@@ -52,7 +53,7 @@ Fiia is still in active development and only supports a small subset of
 Python to see it working on an MD5 example, you can run the following commands:
 
 ```
-./dist/debug/bin/py2mlir.py example/md5_example.py > md5.mlir
+./build/debug/py2mlir/py2mlir.py ./example/md5_example.py > md5.mlir
 ```
 
 This MLIR file can then be optimized by `script-opt`.  For example,
@@ -60,3 +61,4 @@ This MLIR file can then be optimized by `script-opt`.  For example,
 ```
 ./dist/debug/bin/script-opt --python-load-store md5.mlir > md5-opt.mlir
 ```
+
