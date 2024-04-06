@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #include "JavaScript/JavaScriptDialect.h"
 #include "Python/PythonDialect.h"
+#include "Michelson/MichelsonDialect.h"
 #include "Python/PythonLoadStorePass.h"
 
 #include "mlir/Dialect/Arithmetic/IR/Arithmetic.h"
@@ -20,6 +21,7 @@ int main(int argc, char **argv) {
   registry.insert<mlir::js::JavaScriptDialect,
                   mlir::cf::ControlFlowDialect,
                   mlir::python::PythonDialect,
+                  mlir::michelson::MichelsonDialect,
                   mlir::arith::ArithmeticDialect,
                   mlir::func::FuncDialect>();
   // Add the following to include *all* MLIR Core dialects, or selectively
