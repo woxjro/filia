@@ -23,6 +23,18 @@ class Michelson_BinOp<string mnemonic> : Michelson_Op<mnemonic, []> {
     let assemblyFormat = "$lhs `,` $rhs attr-dict `:` type($result)";
 }
 
+def Michelson_GetAmount: Michelson_Op<"get_amount", [NoSideEffect]> {
+    let summary = "GET_AMOUNT";
+    let description = [{
+        ```mlir
+        %0 = michelson.get_amount: !michelson.mutez
+        ```
+    }];
+
+    let results = (outs Michelson_Mutez:$result);
+    let assemblyFormat = "attr-dict `:` type($result)";
+}
+
 // Unary operators
 def Michelson_InvertOp : Michelson_UnaryOp<"invert">;
 def Michelson_NotOp : Michelson_UnaryOp<"not">;

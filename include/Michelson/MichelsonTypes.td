@@ -13,6 +13,19 @@ class Michelson_Type<string name, string typeMnemonic>
   let mnemonic = typeMnemonic;
 }
 
+def Michelson_Mutez: Michelson_Type<"Mutez", "mutez"> {
+    let summary = "Michelson mutez type";
+    let description = [{
+        The `!michelson.mutez` type is an Michelson mutez type.
+
+        Example:
+        ```mlir
+        !michelson.mutez
+        ```
+    }];
+    // let parameters = (ins);
+}
+
 def Michelson_Value : Michelson_Type<"Value", "value"> {
   let summary = "A value in the Michelson language.";
   let description = [{
