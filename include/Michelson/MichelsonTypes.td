@@ -8,10 +8,15 @@
 include "Michelson/MichelsonDialect.td"
 include "mlir/IR/AttrTypeBase.td"
 
-class Michelson_Type<string name, string typeMnemonic>
+class Michelson_Type<string name, string typeMnemonic, list<Trait> traits = []>
     : TypeDef<Michelson_Dialect, name, [], "::mlir::michelson::MichelsonType"> {
   let mnemonic = typeMnemonic;
 }
+
+
+def Michelson_AnyType : Type<
+  CPred<"::llvm::isa<::mlir::michelson::MichelsonType>($_self)">, "michelson type",
+        "::mlir::michelson::MichelsonType">;
 
 def Michelson_Mutez: Michelson_Type<"Mutez", "mutez"> {
     let summary = "Michelson mutez type";
@@ -25,6 +30,54 @@ def Michelson_Mutez: Michelson_Type<"Mutez", "mutez"> {
     }];
     // let parameters = (ins);
 }
+
+def Michelson_Unit: Michelson_Type<"Unit", "unit"> {
+    let summary = "Michelson unit type";
+    let description = [{
+        The `!michelson.unit` type is an Michelson unit type.
+
+        Example:
+        ```mlir
+        !michelson.unit
+        ```
+    }];
+}
+
+
+def Michelson_Operation : Michelson_Type<"Operation", "operation"> {
+  let summary = "Michelson operation type";
+  let description = [{
+    The `!michelson.operation` type is an Michelson operation type.
+
+    Example:
+    ```mlir
+    !michelson.operation
+    ```
+  }];
+}
+
+// TODO: List
+// TODO: Pair
+
+
+// ref: mlir/include/mlir/Dialect/LLVMIR/LLVMTypes.td
+/*
+def Michelson_List : Michelson_Type<"List", "list"> {
+  let summary = "Michelson list type";
+  let description = [{
+    The `!michelson.list` type is an Michelson list type.
+
+    Example:
+    ```mlir
+    !michelson.list<!michelson.mutez>
+    ```
+  }];
+  let parameters = (ins Michelson_AnyType:$elementType);
+  let assemblyFormat = [{
+    `<` $elementType `>`
+  }];
+}
+*/
 
 def Michelson_Value : Michelson_Type<"Value", "value"> {
   let summary = "A value in the Michelson language.";

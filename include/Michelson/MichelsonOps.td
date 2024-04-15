@@ -35,6 +35,9 @@ def Michelson_GetAmount: Michelson_Op<"get_amount", [NoSideEffect]> {
     let assemblyFormat = "attr-dict `:` type($result)";
 }
 
+// TODO: make_pair
+// TODO: make_list
+
 // Unary operators
 def Michelson_InvertOp : Michelson_UnaryOp<"invert">;
 def Michelson_NotOp : Michelson_UnaryOp<"not">;
