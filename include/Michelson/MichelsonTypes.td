@@ -72,10 +72,18 @@ def Michelson_List : Michelson_Type<"List", "list"> {
     !michelson.list<!michelson.mutez>
     ```
   }];
-  let parameters = (ins Michelson_AnyType:$elementType);
+  let parameters = (ins Michelson_Mutez:$elementType);
   let assemblyFormat = [{
     `<` $elementType `>`
   }];
+}
+*/
+
+/*
+def Michelson_Pair: TypeDef<Michelson_Dialect, "pair"> {
+  let parameters = (ins "int":$a, "int":$b);
+  let mnemonic = "pair";
+  let assemblyFormat = "`<` params `>`";
 }
 */
 
