@@ -16,8 +16,20 @@ public:
 
   static bool classof(Type type);
 };
+
+namespace detail {
+    struct StructTypeStorage;
+
+    /// This class defines the Toy struct type. It represents a collection of
+    /// element types. All derived types in MLIR must inherit from the CRTP class
+    /// 'Type::TypeBase'. It takes as template parameters the concrete type
+    /// (StructType), the base class to use (Type), and the storage class
+    /// (StructTypeStorage).
+    class StructType;
+}
 } // namespace michelson
 } // namespace mlir
+
 
 #define GET_TYPEDEF_CLASSES
 #include "Michelson/MichelsonOpsTypes.h.inc"

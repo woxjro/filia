@@ -43,7 +43,7 @@ This will install LLVM into the directory `deps/llvm-install`.
 Once LLVM is installed, you can configure and build Filia with the following commands:
 
 ```sh
-cmake -S . -B build/debug -DMLIR_DIR=deps/llvm-install/lib/cmake/mlir
+sudo cmake -S . -B build/debug -DMLIR_DIR=deps/llvm-install/lib/cmake/mlir
 sudo cmake --build build/debug --target install
 ```
 
