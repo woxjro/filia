@@ -3,3 +3,6 @@
 /.DS_Store
 /build/
 /dist
+.cache/clangd/index
+venv
+compile_commands.json
