@@ -13,11 +13,6 @@ class Michelson_Type<string name, string typeMnemonic, list<Trait> traits = []>
   let mnemonic = typeMnemonic;
 }
 
-
-def Michelson_AnyType : Type<
-  CPred<"::llvm::isa<::mlir::michelson::MichelsonType>($_self)">, "michelson type",
-        "::mlir::michelson::MichelsonType">;
-
 def Michelson_Mutez: Michelson_Type<"Mutez", "mutez"> {
     let summary = "Michelson mutez type";
     let description = [{
@@ -55,6 +50,89 @@ def Michelson_Operation : Michelson_Type<"Operation", "operation"> {
     ```
   }];
 }
+
+def Michelson_StructType :
+    DialectType<Michelson_Dialect, CPred<"$_self.isa<StructType>()">,
+                "Michelson struct type">;
+
+def Michelson_PrimitiveType : Type<
+  CPred<"::llvm::isa<::mlir::michelson::MichelsonType>($_self)">, "michelson type",
+        "::mlir::michelson::MichelsonType">;
+
+
+def Michelson_List: Michelson_Type<"List", "list"> {
+  let summary = "Michelson List with a parameterized element type";
+  let description = [{
+    Syntax:
+
+    ```
+    list-type ::= `list` `<` type `>`
+    ```
+
+    The value of `list` type represents a list number with a parameterized
+    element type, which is composed of a real and imaginary value of that
+    element type. The element must be a floating point or integer scalar type.
+
+    Examples:
+
+    ```mlir
+    list<mutez>
+    ```
+  }];
+  let parameters = (ins "Type":$elementType);
+
+  /*
+  let builders = [
+    TypeBuilderWithInferredContext<(ins "Type":$elementType), [{
+      return $_get(elementType.getContext(), elementType);
+    }]>
+  ];
+  */
+
+  let skipDefaultBuilders = 1;
+  // let genVerifyDecl = 1;
+    let assemblyFormat = [{
+    `<` $elementType `>`
+  }];
+
+}
+
+/*
+def Michelson_ArrayType : Michelson_Type<"Array", "array", [
+    DeclareTypeInterfaceMethods<DataLayoutTypeInterface, ["getTypeSize"]>]> {
+  let summary = "Michelson array type";
+  let description = [{
+    The `!michelson.array` type represents a fixed-size array of element types.
+    It is an aggregate type representing consecutive elements in memory,
+    parameterized by the number of elements and the element type.
+
+    Example:
+
+    ```mlir
+    !michelson.array<4 x i32>
+    ```
+  }];
+
+  let parameters = (ins "Type":$elementType);
+  let assemblyFormat = [{
+    `<` $elementType `>`
+  }];
+
+  let genVerifyDecl = 1;
+
+  let builders = [
+    TypeBuilderWithInferredContext<(ins "Type":$elementType,
+                                        "unsigned":$numElements)>
+  ];
+
+  let extraClassDeclaration = [{
+    /// Checks if the given type can be used inside an array type.
+    static bool isValidElementType(Type type);
+  }];
+}
+*/
+
+def Michelson_Type : AnyTypeOf<[Michelson_PrimitiveType, Michelson_StructType]>;
 
 // TODO: List
 // TODO: Pair

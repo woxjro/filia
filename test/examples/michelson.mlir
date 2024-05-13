@@ -5,6 +5,7 @@ module {
     func.func @smart_contract() {
         // CHECK: %{{.*}} = michelson.get_amount: !michelson.mutez
         %res = michelson.get_amount: !michelson.mutez
+        %list = michelson.make_list: !michelson.list<!michelson.mutez>
         return
     }
 }

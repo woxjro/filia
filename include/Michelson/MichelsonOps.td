@@ -37,6 +37,18 @@ def Michelson_GetAmount: Michelson_Op<"get_amount", [NoSideEffect]> {
 
 // TODO: make_pair
 // TODO: make_list
+def Michelson_MakeList: Michelson_Op<"make_list", [NoSideEffect]> {
+    let summary = "MAKE_LIST";
+    let description = [{
+        ```mlir
+        %0 = michelson.make_list: !michelson.list<!michelson.mutez>
+        ```
+    }];
+
+    let results = (outs Michelson_List:$result);
+    let assemblyFormat = "attr-dict `:` qualified(type($result))";
+}
+
 
 // Unary operators
 def Michelson_InvertOp : Michelson_UnaryOp<"invert">;

@@ -7,6 +7,8 @@
 #include "mlir/IR/DialectImplementation.h"
 #include "mlir/IR/OpImplementation.h"
 #include "llvm/ADT/TypeSwitch.h"
+#include "mlir/IR/Types.h"
+#include "mlir/IR/Builders.h"
 
 using namespace mlir;
 using namespace mlir::michelson;

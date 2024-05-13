@@ -18,6 +18,7 @@ public:
 };
 
 namespace detail {
+    struct ListTypeStorage;
     struct StructTypeStorage;
 
     /// This class defines the Toy struct type. It represents a collection of
