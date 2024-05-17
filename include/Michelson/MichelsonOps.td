@@ -32,11 +32,9 @@ def Michelson_GetAmount: Michelson_Op<"get_amount", [NoSideEffect]> {
     }];
 
     let results = (outs Michelson_Mutez:$result);
-    let assemblyFormat = "attr-dict `:` type($result)";
+    let assemblyFormat = "`(``)` attr-dict `:` type($result)";
 }
 
-// TODO: make_pair
-// TODO: make_list
 def Michelson_MakeList: Michelson_Op<"make_list", [NoSideEffect]> {
     let summary = "MAKE_LIST";
     let description = [{
@@ -46,7 +44,24 @@ def Michelson_MakeList: Michelson_Op<"make_list", [NoSideEffect]> {
     }];
 
     let results = (outs Michelson_List:$result);
-    let assemblyFormat = "attr-dict `:` qualified(type($result))";
+    let assemblyFormat = "`(``)` attr-dict `:` qualified(type($result))";
+}
+
+
+def Michelson_MakePair: Michelson_Op<"make_pair", [NoSideEffect]> {
+    let summary = "MAKE_PAIR";
+    let description = [{
+        ```mlir
+        %0 = michelson.make_pair(%0, %1) : !michelson.pair<!michelson.mutez, !michelson.mutez>
+        ```
+    }];
+
+    // FIXME: polymorphic
+    let arguments = (ins Michelson_Mutez:$lhs, Michelson_Mutez:$rhs);
+    let results = (outs Michelson_Pair:$result);
+    let assemblyFormat = [{
+      $lhs `,` $rhs attr-dict  `:` type($result)
+    }];
 }
 
 

@@ -79,7 +79,7 @@ def Michelson_List: Michelson_Type<"List", "list"> {
     list<mutez>
     ```
   }];
-  let parameters = (ins "Type":$elementType);
+  let parameters = (ins Michelson_Operation:$elementType);
 
   /*
   let builders = [
@@ -97,45 +97,37 @@ def Michelson_List: Michelson_Type<"List", "list"> {
 
 }
 
-/*
-def Michelson_ArrayType : Michelson_Type<"Array", "array", [
-    DeclareTypeInterfaceMethods<DataLayoutTypeInterface, ["getTypeSize"]>]> {
-  let summary = "Michelson array type";
+def Michelson_Pair: Michelson_Type<"Pair", "pair"> {
+  let summary = "Michelson Pair with two parameterized element types";
   let description = [{
-    The `!michelson.array` type represents a fixed-size array of element types.
-    It is an aggregate type representing consecutive elements in memory,
-    parameterized by the number of elements and the element type.
+    Syntax:
 
-    Example:
+    ```
+    pair-type ::= `pair` `<` type `,` type `>`
+    ```
+
+    The value of `pair` type represents a pair of two parameterized
+    element types. 
+
+    Examples:
 
     ```mlir
-    !michelson.array<4 x i32>
+    pair<mutez, mutez>
     ```
   }];
 
-  let parameters = (ins "Type":$elementType);
+  // FIXME: polymorphic types
+  let parameters = (ins Michelson_Mutez:$firstElementType, Michelson_Mutez:$secondElementType);
+
+  let skipDefaultBuilders = 1;
   let assemblyFormat = [{
-    `<` $elementType `>`
-  }];
-
-  let genVerifyDecl = 1;
-
-  let builders = [
-    TypeBuilderWithInferredContext<(ins "Type":$elementType,
-                                        "unsigned":$numElements)>
-  ];
-
-  let extraClassDeclaration = [{
-    /// Checks if the given type can be used inside an array type.
-    static bool isValidElementType(Type type);
+    `<` $firstElementType `,` $secondElementType `>`
   }];
 }
-*/
+
 
 def Michelson_Type : AnyTypeOf<[Michelson_PrimitiveType, Michelson_StructType]>;
 
-// TODO: List
-// TODO: Pair
 
 
 // ref: mlir/include/mlir/Dialect/LLVMIR/LLVMTypes.td
