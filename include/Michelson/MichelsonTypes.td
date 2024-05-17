@@ -128,35 +128,6 @@ def Michelson_Pair: Michelson_Type<"Pair", "pair"> {
 
 def Michelson_Type : AnyTypeOf<[Michelson_PrimitiveType, Michelson_StructType]>;
 
-
-
-// ref: mlir/include/mlir/Dialect/LLVMIR/LLVMTypes.td
-/*
-def Michelson_List : Michelson_Type<"List", "list"> {
-  let summary = "Michelson list type";
-  let description = [{
-    The `!michelson.list` type is an Michelson list type.
-
-    Example:
-    ```mlir
-    !michelson.list<!michelson.mutez>
-    ```
-  }];
-  let parameters = (ins Michelson_Mutez:$elementType);
-  let assemblyFormat = [{
-    `<` $elementType `>`
-  }];
-}
-*/
-
-/*
-def Michelson_Pair: TypeDef<Michelson_Dialect, "pair"> {
-  let parameters = (ins "int":$a, "int":$b);
-  let mnemonic = "pair";
-  let assemblyFormat = "`<` params `>`";
-}
-*/
-
 def Michelson_Value : Michelson_Type<"Value", "value"> {
   let summary = "A value in the Michelson language.";
   let description = [{

@@ -60,7 +60,7 @@ def Michelson_MakePair: Michelson_Op<"make_pair", [NoSideEffect]> {
     let arguments = (ins Michelson_Mutez:$lhs, Michelson_Mutez:$rhs);
     let results = (outs Michelson_Pair:$result);
     let assemblyFormat = [{
-      $lhs `,` $rhs attr-dict  `:` type($result)
+      `(` $lhs `,` $rhs `)` attr-dict  `:` type($result)
     }];
 }
 
