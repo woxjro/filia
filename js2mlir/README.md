@@ -18,5 +18,5 @@ This will compile the TypeScript and put files in the `dist` subdirectory.  You
 can then run `js2mlir` on one of the test files included with Filia:
 
 ```
-./bin/js2mlir script ../examples/insecure_eval.js insecure_eval.mlir
+./bin/js2mlir script ../example/insecure_eval.js insecure_eval.mlir
 ```
