@@ -6,7 +6,7 @@ import * as js from './javascript'
 import * as mlir from "./mlir"
 import * as mlirb from './mlir/basic'
 import * as mlirjs from './mlir/javascript'
-// import * as mlirmichelson from './mlir/michelson'
+import * as mlirmichelson from './mlir/michelson'
 import * as cf from './mlir/cf'
 import { ReturnOp  } from './mlir/standard'
 import { BlockId, Block, BlockArgDecl, Op, Value } from "./mlir"
@@ -412,6 +412,12 @@ class BlockContext {
     let v = this.fun.freshValue()
     this.appendStatement(new mlirjs.Number(v, x))
     return v
+  }
+
+  michelsonGetAmount(): Value {
+      let v = this.fun.freshValue()
+      this.appendStatement(new mlirmichelson.GetAmount(v))
+      return v
   }
 
   /** Return a value equal to null. */
@@ -840,6 +846,33 @@ class Scope {
       this.addWarning(e.callee.loc, `Calling super unsupported`)
       return this.block.undefinedValue()
     }
+
+
+    /*
+    console.log("traslateCallExpression:", e);
+     traslateCallExpression: CallExpression {
+      type: 'CallExpression',
+      callee: Identifier {
+        type: 'Identifier',
+        name: 'MichelsonGetAmount',
+        loc: { start: [Object], end: [Object] }
+      },
+      arguments: [],
+      loc: { start: { line: 6, column: 10 }, end: { line: 6, column: 30 } }
+    }
+    */
+    switch (e.callee.type) {
+        case 'Identifier':
+            {
+                const name = e.callee.name;
+                if (name === 'MichelsonGetAmount') {
+                    console.log("MichelsonGetAmount");
+                    return this.block.michelsonGetAmount();
+                }
+            }
+    }
+
+
     const callee = this.translateExpression(e.callee)
     const args:mlirjs.CallArg[] = []
     for (const a of e.arguments) {
@@ -1446,7 +1479,7 @@ try {
       process.exit(-1)
   }
   const module = new MlirModule()
-  const main = new FunctionContext(module.freshFunctionId('script_main'))
+  const main = new FunctionContext(module.freshFunctionId('smart_contract'))
 
   const tl = new Scope(null, {newModule: module, newFunction: main})
   const c = tl.translateStatements(s.body)
