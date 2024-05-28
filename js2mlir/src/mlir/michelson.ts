@@ -1,68 +1,70 @@
-import { Op, TypeAttr, Value, ppCommas } from '../mlir'
+import { Op, TypeAttr, Value, ppCommas } from '../mlir';
 // import * as mlir from '../mlir'
 
 // michelson {{
-export const MutezType : TypeAttr = {
+export const MutezType: TypeAttr = {
   toString() {
-    return "!michelson.mutez"
-  }
-}
+    return '!michelson.mutez';
+  },
+};
 
-export const OperationType : TypeAttr = {
+export const OperationType: TypeAttr = {
   toString() {
-    return "!michelson.operation"
-  }
-}
+    return '!michelson.operation';
+  },
+};
 
-export function ListType(type: TypeAttr) : TypeAttr {
+export function ListType(type: TypeAttr): TypeAttr {
   return {
     toString() {
-      return `!michelson.list<${type}>`
-    }
-  }
+      return `!michelson.list<${type}>`;
+    },
+  };
 }
 
-export function PairType(first: TypeAttr, second: TypeAttr) : TypeAttr {
+export function PairType(first: TypeAttr, second: TypeAttr): TypeAttr {
   return {
     toString() {
-      return `!michelson.pair<${first},${second}>`
-    }
-  }
+      return `!michelson.pair<${first},${second}>`;
+    },
+  };
 }
 // }}
 
 // michelson ops {{
 export class GetAmount extends Op {
-    constructor(readonly ret: Value) {
-        super()
-    }
-    
-    toString() {
-        return `${this.ret} = michelson.get_amount() : ${MutezType}`
-    }
+  constructor(readonly ret: Value) {
+    super();
+  }
+
+  toString() {
+    return `${this.ret} = michelson.get_amount() : ${MutezType}`;
+  }
 }
 
 export class MakeOperationList extends Op {
-    constructor(readonly ret: Value) {
-        super()
-    }
-    
-    toString() {
-        return `${this.ret} = michelson.make_list() : ${ListType(OperationType)}`
-    }
+  constructor(readonly ret: Value) {
+    super();
+  }
+
+  toString() {
+    return `${this.ret} = michelson.make_list() : ${ListType(OperationType)}`;
+  }
 }
 
 export class MakePair extends Op {
-    constructor(readonly ret: Value,
-                readonly first: Value,
-                readonly second: Value, 
-                readonly firstType: TypeAttr,
-                readonly secondType: TypeAttr) {
-        super()
-    }
-    
-    toString() {
-        return `${this.ret} = michelson.make_pair(${this.first}, ${this.second}) : ${PairType(this.firstType, this.secondType)}`
-    }
+  constructor(
+    readonly ret: Value,
+    readonly first: Value,
+    readonly second: Value,
+    readonly firstType: TypeAttr,
+    readonly secondType: TypeAttr,
+  ) {
+    super();
+  }
+
+  toString() {
+    return `${this.ret} = michelson.make_pair(${this.first}, ${this.second}) : ${PairType(this.firstType, this.secondType)}`;
+  }
 }
 // }}

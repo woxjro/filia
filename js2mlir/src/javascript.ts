@@ -1,4 +1,4 @@
-export type Ident = string
+export type Ident = string;
 
 // This returns true if the Javascript identifier may be used directly as an
 // MLIR suffix-id
@@ -13,5 +13,5 @@ export type Ident = string
 //   letter    ::= [a-zA-Z]
 //   id-punct  ::= [$._-]
 export function allowedIdent(x: string): boolean {
-  return /^[A-Za-z-_$][A-Za-z0-9_$]*$/.test(x)
+  return /^[A-Za-z-_$][A-Za-z0-9_$]*$/.test(x);
 }
