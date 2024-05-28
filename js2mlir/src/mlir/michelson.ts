@@ -41,4 +41,28 @@ export class GetAmount extends Op {
         return `${this.ret} = michelson.get_amount() : ${MutezType}`
     }
 }
+
+export class MakeOperationList extends Op {
+    constructor(readonly ret: Value) {
+        super()
+    }
+    
+    toString() {
+        return `${this.ret} = michelson.make_list() : ${ListType(OperationType)}`
+    }
+}
+
+export class MakePair extends Op {
+    constructor(readonly ret: Value,
+                readonly first: Value,
+                readonly second: Value, 
+                readonly firstType: TypeAttr,
+                readonly secondType: TypeAttr) {
+        super()
+    }
+    
+    toString() {
+        return `${this.ret} = michelson.make_pair(${this.first}, ${this.second}) : ${PairType(this.firstType, this.secondType)}`
+    }
+}
 // }}

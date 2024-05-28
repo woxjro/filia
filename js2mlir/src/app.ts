@@ -420,6 +420,12 @@ class BlockContext {
       return v
   }
 
+  MichelsonMakeOperationList(): Value {
+      let v = this.fun.freshValue()
+      this.appendStatement(new mlirmichelson.MakeOperationList(v))
+      return v
+  }
+
   /** Return a value equal to null. */
   null():Value {
     let v = this.fun.freshValue()
@@ -868,6 +874,9 @@ class Scope {
                 if (name === 'MichelsonGetAmount') {
                     console.log("MichelsonGetAmount");
                     return this.block.michelsonGetAmount();
+                } else if (name === 'MichelsonMakeOperationList') {
+                    console.log("MichelsonMakeOperationList");
+                    return this.block.MichelsonMakeOperationList();
                 }
             }
     }
