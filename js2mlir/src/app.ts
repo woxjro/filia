@@ -418,7 +418,25 @@ class BlockContext {
 
   MichelsonMakeOperationList(): Value {
     let v = this.fun.freshValue();
-    this.appendStatement(new mlirmichelson.MakeOperationList(v));
+    this.appendStatement(
+      new mlirmichelson.MakeList(v, mlirmichelson.OperationType),
+    );
+    return v;
+  }
+
+  // FIXME: polymorphic
+  MichelsonMakeResultPair(first: Value, second: Value): Value {
+    let v = this.fun.freshValue();
+    this.appendStatement(
+      new mlirmichelson.MakePair(
+        v,
+        first,
+        second,
+        mlirmichelson.ListType(mlirmichelson.OperationType),
+        mlirmichelson.MutezType,
+      ),
+    );
+
     return v;
   }
 
@@ -883,11 +901,15 @@ class Scope {
       case 'Identifier': {
         const name = e.callee.name;
         if (name === 'MichelsonGetAmount') {
-          console.log('MichelsonGetAmount');
           return this.block.michelsonGetAmount();
         } else if (name === 'MichelsonMakeOperationList') {
-          console.log('MichelsonMakeOperationList');
           return this.block.MichelsonMakeOperationList();
+        } else if (name === 'MichelsonMakeResultPair') {
+          const [first, second] = e.arguments as [
+            estree.Identifier,
+            estree.Identifier,
+          ];
+          return this.block.MichelsonMakeResultPair(first.name, second.name);
         }
       }
     }

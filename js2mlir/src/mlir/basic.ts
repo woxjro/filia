@@ -41,7 +41,7 @@ export class Func extends Op {
   write(s: WriteStream, indent: string) {
     if (this.body && this.body.blocks.length > 0) {
       const blocks = this.body.blocks;
-      s.write(`${indent}func ${this.sym_name}${this.type} {\n`);
+      s.write(`${indent}func.func ${this.sym_name}${this.type} {\n`);
       if (blocks.length === 1) {
         const b = blocks[0];
         b.writeStmts(s, indent + '  ');
