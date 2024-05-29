@@ -1469,6 +1469,10 @@ class Scope {
         return true;
       // Declaration
       case 'FunctionDeclaration':
+        if (s.id?.name == 'smartContract') {
+          console.log(s.id?.name);
+          this.translateStatements(s.body.body);
+        }
         this.unhandledStatement(s);
         return true;
       case 'StaticBlock':
@@ -1529,7 +1533,7 @@ try {
 
 try {
   var s: esprima.Program;
-  const config: esprima.ParseOptions = { loc: true };
+  const config: esprima.ParseOptions = { loc: true, comment: true };
   switch (fileType) {
     case 'module':
       s = esprima.parseModule(contents, config);
@@ -1541,12 +1545,12 @@ try {
       process.stderr.write('Please specify whether script or module.\n');
       process.exit(-1);
   }
+  fs.writeFileSync('ast.json', JSON.stringify(s, null, 2));
   const module = new MlirModule();
   const main = new FunctionContext(module.freshFunctionId('smart_contract'));
 
   const tl = new Scope(null, { newModule: module, newFunction: main });
-  const c = tl.translateStatements(s.body);
-  if (c) tl.block.return(null);
+  const _ = tl.translateStatements(s.body);
 
   module.ops.push(main.getFunction());
   for (const w of tl.warnings) {
