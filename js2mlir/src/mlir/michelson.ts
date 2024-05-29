@@ -29,6 +29,16 @@ export function PairType(first: TypeAttr, second: TypeAttr): TypeAttr {
     },
   };
 }
+
+export function getTypeFromString(type: string): TypeAttr {
+  switch (type) {
+    case 'mutez':
+      return MutezType;
+    default:
+      throw new Error(`Unsupported type: ${type}`);
+  }
+}
+
 // }}
 
 // michelson ops {{

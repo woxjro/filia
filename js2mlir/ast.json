@@ -769,7 +769,7 @@
   "comments": [
     {
       "type": "Block",
-      "value": " \n * @param {mutez} storage\n * @param {mutez} param\n ",
+      "value": " \n * @storage {mutez} storage\n * @param {mutez} param\n ",
       "loc": {
         "start": {
           "line": 18,

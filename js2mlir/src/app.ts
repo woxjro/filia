@@ -85,7 +85,8 @@ class MlirModule {
   }
 
   addFunction(fun: FunctionContext) {
-    this.ops.push(fun.getFunction());
+    throw new Error('Method not implemented.');
+    // this.ops.push(fun.getFunction());
   }
 
   uniqueClassName(name: estree.Identifier | null): string {
@@ -345,11 +346,10 @@ class FunctionContext {
     this.blocks.push(b);
   }
 
-  getFunction(): mlirb.Func {
+  // FIXME: !!!!
+  getFunction(argTypes: mlirb.FunArg[], retType: mlir.TypeAttr): mlirb.Func {
     process.stderr.write(`Function ${this.blocks.length}\n`);
-    const argTypes: mlirb.FunArg[] = [];
     const region = { blocks: this.blocks };
-    const retType = mlirjs.ValueType;
     return new mlirb.Func(
       this.symbol,
       mlirb.funType(argTypes, retType),
@@ -1550,9 +1550,44 @@ try {
   const main = new FunctionContext(module.freshFunctionId('smart_contract'));
 
   const tl = new Scope(null, { newModule: module, newFunction: main });
+
+  const comment = s.comments?.find((c) => {
+    return c.value.includes('@param') && c.value.includes('@storage');
+  });
+
+  const storageType = comment?.value.match(/@storage {([^}]+)} ([^}]+)\n/)?.[1];
+  const storageName = comment?.value.match(/@storage {([^}]+)} ([^}]+)\n/)?.[2];
+  const paramType = comment?.value.match(/@param {([^}]+)} ([^}]+)\n/)?.[1];
+  const paramName = comment?.value.match(/@param {([^}]+)} ([^}]+)\n/)?.[2];
+
+  if (
+    storageType === undefined ||
+    storageName === undefined ||
+    paramType === undefined ||
+    paramName === undefined
+  ) {
+    throw new Error('Missing storage or param comment');
+  }
+
+  console.log(storageType, storageName, paramType, paramName);
+
   const _ = tl.translateStatements(s.body);
 
-  module.ops.push(main.getFunction());
+  module.ops.push(
+    main.getFunction(
+      [
+        { name: paramName, type: mlirmichelson.getTypeFromString(paramType) },
+        {
+          name: storageName,
+          type: mlirmichelson.getTypeFromString(storageType),
+        },
+      ],
+      mlirmichelson.PairType(
+        mlirmichelson.ListType(mlirmichelson.OperationType),
+        mlirmichelson.MutezType,
+      ), // FIXME
+    ),
+  );
   for (const w of tl.warnings) {
     process.stderr.write(`${formatWarning(w)}\n`);
   }
