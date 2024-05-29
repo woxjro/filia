@@ -10,6 +10,7 @@ import * as mlirmichelson from './mlir/michelson';
 import * as cf from './mlir/cf';
 import { ReturnOp } from './mlir/standard';
 import { BlockId, Block, BlockArgDecl, Op, Value } from './mlir';
+import { compile } from './compiler';
 
 import Heap from 'heap-js';
 
@@ -1571,7 +1572,11 @@ try {
 
   console.log(storageType, storageName, paramType, paramName);
 
-  const _ = tl.translateStatements(s.body);
+  const typeEnv = new Map();
+  typeEnv.set(paramName, mlirmichelson.getTypeFromString(paramType));
+  typeEnv.set(storageName, mlirmichelson.getTypeFromString(storageType));
+  compile(s.body, typeEnv);
+  // const _ = tl.translateStatements(s.body);
 
   module.ops.push(
     main.getFunction(

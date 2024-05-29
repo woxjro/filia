@@ -15,9 +15,11 @@ type TypeEnv = Map<Value, mlir.TypeAttr>;
 
 function compileStatement(
   stmt: estree.Directive | estree.Statement | estree.ModuleDeclaration,
-) {
+  typeEnv: TypeEnv,
+): TypeEnv {
   switch (stmt.type) {
     // Statement or directive
+    /*
     case 'ExpressionStatement':
       throw new Error('Not implemented:ExpressionStatement');
     case 'BlockStatement':
@@ -30,6 +32,7 @@ function compileStatement(
       throw new Error('Not implemented:DebuggerStatement');
     case 'WithStatement':
       throw new Error('Not implemented:WithStatement');
+    */
     case 'ReturnStatement': {
       if (stmt.argument) {
         switch (stmt.argument.type) {
@@ -45,6 +48,7 @@ function compileStatement(
       }
       break;
     }
+    /*
     case 'LabeledStatement':
       throw new Error('Not implemented:LabeledStatement');
     case 'BreakStatement':
@@ -69,11 +73,12 @@ function compileStatement(
       throw new Error('Not implemented:ForInStatement');
     case 'ForOfStatement':
       throw new Error('Not implemented:ForOfStatement');
+    */
     // Declaration
     case 'FunctionDeclaration': {
       if (stmt.id?.name == 'smartContract') {
         console.log(stmt);
-        compile(stmt.body.body);
+        compile(stmt.body.body, typeEnv);
       } else if (stmt.id?.name == 'MichelsonGetAmount') {
       } else if (stmt.id?.name == 'MichelsonMakePair') {
       } else if (stmt.id?.name == 'MichelsonMakeOperationList') {
@@ -88,19 +93,27 @@ function compileStatement(
         case 'let':
           throw new Error('Not implemented');
         case 'const':
-          console.log(stmt.declarations[0]);
+          const decl = stmt.declarations[0];
+          const id = decl.id as estree.Identifier;
+          // FIXME
+          typeEnv.set(id.name, mlirmichelson.MutezType);
       }
       break;
     }
+    /*
     case 'ClassDeclaration':
       throw new Error('Not implemented:ClassDeclaration');
+    */
   }
+  return typeEnv;
 }
 
 export function compile(
   stmts: (estree.Directive | estree.Statement | estree.ModuleDeclaration)[],
+  typeEnv: TypeEnv,
 ) {
   for (const stmt of stmts) {
-    compileStatement(stmt);
+    typeEnv = compileStatement(stmt, typeEnv);
+    console.log(typeEnv);
   }
 }
