@@ -19,7 +19,7 @@ export class ReturnOp extends TerminalOp {
         valStr = `${valStr}, ${this.values[i].value}`;
         typeStr = `${typeStr}, ${this.values[i].type}`;
       }
-      res = `${valStr} : ${typeStr}`;
+      res = `%${valStr} : ${typeStr}`;
     }
 
     return `return ${res}`;

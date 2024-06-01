@@ -13,10 +13,15 @@ import { BlockId, Block, BlockArgDecl, Op, Value } from './mlir';
 
 type TypeEnv = Map<Value, mlir.TypeAttr>;
 
+export interface CompileStatementResult {
+  op: Op | null;
+  typeEnv: TypeEnv;
+}
+
 function compileStatement(
   stmt: estree.Directive | estree.Statement | estree.ModuleDeclaration,
   typeEnv: TypeEnv,
-): TypeEnv {
+): CompileStatementResult {
   switch (stmt.type) {
     // Statement or directive
     /*
@@ -37,8 +42,10 @@ function compileStatement(
       if (stmt.argument) {
         switch (stmt.argument.type) {
           case 'Identifier': {
-            console.log(`return ${stmt.argument.name}`);
-            break;
+            const type = typeEnv.get(stmt.argument.name) as mlir.TypeAttr;
+            const op = new ReturnOp([{ value: stmt.argument.name, type }]);
+            console.log(op.toString());
+            return { op, typeEnv };
           }
           default:
             throw new Error(`Not implemented:${stmt.argument.type}`);
@@ -46,7 +53,6 @@ function compileStatement(
       } else {
         throw new Error('Not implemented');
       }
-      break;
     }
     /*
     case 'LabeledStatement':
@@ -77,14 +83,20 @@ function compileStatement(
     // Declaration
     case 'FunctionDeclaration': {
       if (stmt.id?.name == 'smartContract') {
-        console.log(stmt);
-        compile(stmt.body.body, typeEnv);
+        const ops = compile(stmt.body.body, typeEnv);
+        console.error(ops.map((op) => op.toString()).join('\n'));
+        return { op: null, typeEnv };
       } else if (stmt.id?.name == 'MichelsonGetAmount') {
+        return { op: null, typeEnv };
       } else if (stmt.id?.name == 'MichelsonMakePair') {
+        return { op: null, typeEnv };
       } else if (stmt.id?.name == 'MichelsonMakeOperationList') {
+        return { op: null, typeEnv };
       } else if (stmt.id?.name == 'MichelsonMakeResultPair') {
+        return { op: null, typeEnv };
+      } else {
+        return { op: null, typeEnv };
       }
-      break;
     }
     case 'VariableDeclaration': {
       switch (stmt.kind) {
@@ -94,26 +106,70 @@ function compileStatement(
           throw new Error('Not implemented');
         case 'const':
           const decl = stmt.declarations[0];
+          const callExpression = decl.init as estree.CallExpression;
+          const calleeIdentifier = callExpression.callee as estree.Identifier;
           const id = decl.id as estree.Identifier;
-          // FIXME
-          typeEnv.set(id.name, mlirmichelson.MutezType);
+          if (calleeIdentifier.name == 'MichelsonMakeResultPair') {
+            const fst = callExpression.arguments[0] as estree.Identifier;
+            const snd = callExpression.arguments[1] as estree.Identifier;
+
+            const fstType = typeEnv.get(fst.name) as mlir.TypeAttr;
+            const sndType = typeEnv.get(snd.name) as mlir.TypeAttr;
+
+            const op = new mlirmichelson.MakePair(
+              id.name,
+              fst.name,
+              snd.name,
+              fstType,
+              sndType,
+            );
+
+            typeEnv.set(id.name, mlirmichelson.PairType(fstType, sndType));
+
+            console.log(op.toString());
+            return { op, typeEnv };
+          } else if (calleeIdentifier.name == 'MichelsonMakeOperationList') {
+            const op = new mlirmichelson.MakeList(
+              id.name,
+              mlirmichelson.ListType(mlirmichelson.OperationType),
+            );
+
+            console.log(op.toString());
+
+            typeEnv.set(
+              id.name,
+              mlirmichelson.ListType(mlirmichelson.OperationType),
+            );
+            return { op, typeEnv };
+          } else if (calleeIdentifier.name == 'MichelsonGetAmount') {
+            const op = new mlirmichelson.GetAmount(id.name);
+            console.log(op.toString());
+            typeEnv.set(id.name, mlirmichelson.MutezType);
+            return { op, typeEnv };
+          } else {
+            throw new Error('Not implemented');
+          }
       }
-      break;
     }
     /*
     case 'ClassDeclaration':
       throw new Error('Not implemented:ClassDeclaration');
     */
   }
-  return typeEnv;
+  throw new Error(`Not implemented:${stmt}`);
 }
 
 export function compile(
   stmts: (estree.Directive | estree.Statement | estree.ModuleDeclaration)[],
   typeEnv: TypeEnv,
-) {
+): Op[] {
+  const mlirStms: Op[] = [];
   for (const stmt of stmts) {
-    typeEnv = compileStatement(stmt, typeEnv);
-    console.log(typeEnv);
+    const { op, typeEnv: newTypeEnv } = compileStatement(stmt, typeEnv);
+    if (op) {
+      mlirStms.push(op);
+    }
+    typeEnv = newTypeEnv;
   }
+  return mlirStms;
 }

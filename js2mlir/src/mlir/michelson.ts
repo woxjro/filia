@@ -48,7 +48,7 @@ export class GetAmount extends Op {
   }
 
   toString() {
-    return `${this.ret} = michelson.get_amount() : ${MutezType}`;
+    return `%${this.ret} = "michelson.get_amount"() : ${MutezType}`;
   }
 }
 
@@ -61,7 +61,7 @@ export class MakeList extends Op {
   }
 
   toString() {
-    return `${this.ret} = michelson.make_list() : ${ListType(this.type)}`;
+    return `%${this.ret} = "michelson.make_list"() : ${ListType(this.type)}`;
   }
 }
 
@@ -77,7 +77,21 @@ export class MakePair extends Op {
   }
 
   toString() {
-    return `${this.ret} = michelson.make_pair(%${this.first}, %${this.second}) : ${PairType(this.firstType, this.secondType)}`;
+    return `%${this.ret} = "michelson.make_pair"(%${this.first}, %${this.second}) : (${this.firstType}, ${this.secondType}) -> ${PairType(this.firstType, this.secondType)}`;
   }
 }
+/*
+func.func @smart_contract(%parameter: !michelson.unit, %storage: !michelson.unit)
+    -> !michelson.pair<!michelson.list<!michelson.operation>, !michelson.unit> {
+
+    %unit = "michelson.get_unit"() : () -> !michelson.unit
+    %operations = "michelson.make_list"() : () -> !michelson.list<!michelson.operation>
+
+    %res = "michelson.make_pair"(%operations, %unit) :
+      (!michelson.list<!michelson.operation> , !michelson.unit)
+        -> !michelson.pair<!michelson.list<!michelson.operation>, !michelson.unit>
+
+    return %res : !michelson.pair<!michelson.list<!michelson.operation>, !michelson.unit>
+  }
+*/
 // }}
