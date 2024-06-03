@@ -84,7 +84,11 @@ function compileStatement(
     case 'FunctionDeclaration': {
       if (stmt.id?.name == 'smartContract') {
         const ops = compile(stmt.body.body, typeEnv);
+        console.error("module {");
+        console.error("func.func @smart_contract(%parameter: !michelson.mutez, %storage: !michelson.mutez) -> !michelson.pair<!michelson.list<!michelson.operation>, !michelson.mutez> {");
         console.error(ops.map((op) => op.toString()).join('\n'));
+        console.error(" }");
+        console.error("}");
         return { op: null, typeEnv };
       } else if (stmt.id?.name == 'MichelsonGetAmount') {
         return { op: null, typeEnv };
@@ -131,7 +135,7 @@ function compileStatement(
           } else if (calleeIdentifier.name == 'MichelsonMakeOperationList') {
             const op = new mlirmichelson.MakeList(
               id.name,
-              mlirmichelson.ListType(mlirmichelson.OperationType),
+              mlirmichelson.OperationType,
             );
 
             console.log(op.toString());
@@ -173,3 +177,10 @@ export function compile(
   }
   return mlirStms;
 }
+/*
+module {
+  func.func @smart_contract(%parameter: !michelson.unit, %storage: !michelson.unit)
+    -> !michelson.pair<!michelson.list<!michelson.operation>, !michelson.unit> {
+  }
+}
+*/

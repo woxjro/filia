@@ -349,7 +349,7 @@ class FunctionContext {
 
   // FIXME: !!!!
   getFunction(argTypes: mlirb.FunArg[], retType: mlir.TypeAttr): mlirb.Func {
-    process.stderr.write(`Function ${this.blocks.length}\n`);
+    // process.stderr.write(`Function ${this.blocks.length}\n`);
     const region = { blocks: this.blocks };
     return new mlirb.Func(
       this.symbol,
@@ -1569,8 +1569,6 @@ try {
   ) {
     throw new Error('Missing storage or param comment');
   }
-
-  console.log(storageType, storageName, paramType, paramName);
 
   const typeEnv = new Map();
   typeEnv.set(paramName, mlirmichelson.getTypeFromString(paramType));

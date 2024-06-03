@@ -48,7 +48,7 @@ export class GetAmount extends Op {
   }
 
   toString() {
-    return `%${this.ret} = "michelson.get_amount"() : ${MutezType}`;
+    return `%${this.ret} = "michelson.get_amount"() : () -> ${MutezType}`;
   }
 }
 
@@ -61,7 +61,7 @@ export class MakeList extends Op {
   }
 
   toString() {
-    return `%${this.ret} = "michelson.make_list"() : ${ListType(this.type)}`;
+    return `%${this.ret} = "michelson.make_list"() : () -> ${ListType(this.type)}`;
   }
 }
 
